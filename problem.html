@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Modern Business - Start Bootstrap Template</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="css/modern-business.css" rel="stylesheet">
+
+  <!-- Vega -->
+  <script src="https://vega.github.io/vega/vega.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@3"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@5"></script>
+
+  <!-- Plotly-->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">DPGraph</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="problem.html">Problem Statement</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="frontier.html">Accuracy Frontier</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="performance.html">Performance Frontier</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPortfolio" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Empirical Findings
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownPortfolio">
+              <a class="dropdown-item" href="finding.html">Finding Overview</a>
+              <a class="dropdown-item" href="#">Competitive Algorithm</a>
+              <a class="dropdown-item" href="#">Effect of Data Shape</a>
+              <a class="dropdown-item" href="#">Comparison Against Baseline</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownBlog" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Background Overview
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownBlog">
+              <a class="dropdown-item" href="glossary.html">Reference: Glossary</a>
+              <a class="dropdown-item" href="dataset.html">Reference: Dataset</a>
+              <a class="dropdown-item" href="algorithm.html">Reference: Algorithms</a>
+              <a class="dropdown-item" href="DPdefinition.html">Reference: Differential Privacy</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- Page Content -->
+  <div class="container">
+
+    <h1 class="text-left">Problem Statement</h1>
+    <p class="text-left" style= "background-color: PowderBlue"> Which differentially private algorithms introduce the least errors for the task of releasing the degree distribution, or subgraph counting, for a graph dataset?</p>
+
+    <ul>
+      <li>The degree distribution is the probability distribution of  all node’s degrees in a graph dataset.</li>
+      <li>Subgraph counting returns the count of occurrences of a subgraph T (for example, a triangle) in a given graph G.</li>
+      <li>Both statistics reveal valuable properties about a graph in graph analysis.</li>
+    </ul> 
+    <p class="text-left"> Below we give demonstrations of our problem on some graph datasets. Since we have two different statistics to release, our demonstrations are different for each statistic. We can choose between which one of the two statistics we are interested in by specifying it in the input setting. </p>
+
+    <p class="text-left"> For degree distribution, the true degree distribution histogram of the original graph dataset is shown on the left. The noisy degree distribution histogram, which is calculated from the input graph dataset based on our differentially private graph algorithm, is shown on the right. * Both histograms contain the same number of bins for easier comparison. Clicking on a bin of a histogram displays the number of counts in that bin. *</p>
+
+    <p class="text-left"> For subgraph counting, we first show the shape of the subgraph. Then, two counts are displayed. “True Count” is the number of subgraphs in the original graph. “Noisy Count” is the count we obtained from running the differentially private graph algorithm on the input graph.
+    </p>
+
+<!--
+      <div class="btn-group">
+        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Utility Function
+        </button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#">Degree Distribution</a>
+          <a class="dropdown-item" href="#">Subgraph Counting</a>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Dataset
+        </button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#">First Dataset</a>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Algorithm
+        </button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#">Naive Trunction</a>
+          <a class="dropdown-item" href="#">&Theta;-Cumulative</a>
+          <a class="dropdown-item" href="#">&Theta;-&Omega; Histogram</a>
+          <a class="dropdown-item" href="#">Flowgraph</a>
+        </div>  
+      </div>
+-->
+
+    <select id = "Degree Type"> 
+    <option value = "1" selected = "selected">Node DP</option>
+    </select>
+
+    <select id = "Utility"> 
+    <option value = "1" selected = "selected">Degree Distribution</option>
+    </select>
+
+    <select id = "Dataset"> 
+    <option value = "1" selected = "selected">Dataset:</option>
+    <option value = "2">CIT</option>
+    <option value = "3">DBLP</option>
+    <option value = "4">Facebook</option>
+    </select>
+
+    <select id = "Algorithm"> 
+    <option value = "1" selected = "selected">Algorithm:</option>
+    <option value = "2">toH</option>
+    <option value = "3">NL</option>
+    <option value = "4">CH</option>
+    </select>
+
+    <select id = "Epsilon"> 
+    <option value = "1" selected = "selected">Epsilon:</option>
+    <option value = "2">0.1</option>
+    <option value = "3">1</option>
+    <option value = "4">10</option>
+    </select>
+
+    <button onclick="matchFn()">Apply Setting</button>
+
+    <br>
+
+    <p id = "result"> Display the user input here. </p>
+
+    <script>
+
+      function matchFn() {
+        if (document.getElementById("Dataset").value == 1 || document.getElementById("Algorithm").value == 1){
+          document.getElementById("result").innerHTML = "Please select algorithm/dataset !";
+        } else if (document.getElementById("Epsilon").value == 1) {
+          document.getElementById("result").innerHTML = "Please select epsilon level !";
+        } 
+        else {
+          document.getElementById("result").innerHTML = "This input choice is valid."
+        }
+      }
+
+    </script>
+
+    <br>
+
+
+<!--     <div id="trueHist" class="hi"></div>
+
+    <script>
+      vegaEmbed(
+        '#trueHist',
+        'trueHist.json'
+        );
+      </script>
+
+      <div id="noisyHist" class="hi2"></div>
+
+      <script>
+        vegaEmbed(
+          '#noisyHist',
+          'noisyHist.json'
+          );
+        </script> -->
+
+      <div>
+        <div style="float: left;" id="trueHist" class="trueHist"></div>
+        <div style="float: left;" id="noisyHist" class="noisyHist"></div>
+        <br style="clear: left;" />
+      </div>
+
+      <script>
+
+        Plotly.d3.csv("trueHistCSV.csv", function(err, rows){
+
+            function unpack(rows, key) {
+              return rows.map(function(row) { return row[key]; });
+            }
+
+            var data = [{
+              type: 'bar',
+              x: unpack(rows, 'degree'),
+              y: unpack(rows, 'count')
+            }]
+
+            var layout = {
+              autosize: false,
+              width: 300,
+              height: 350,
+              mode:'markers',
+              hovermode:'closest',
+              title:'Noisy Histogram'
+            };
+
+            Plotly.newPlot('trueHist', data, layout)
+
+          });
+
+        Plotly.d3.csv("noisyHistCSV.csv", function(err, rows){
+
+            function unpack(rows, key) {
+              return rows.map(function(row) { return row[key]; });
+            }
+
+            var data = [{
+              type: 'bar',
+              x: unpack(rows, 'degree'),
+              y: unpack(rows, 'count')
+            }]
+
+            var layout = {
+              autosize: false,
+              width: 300,
+              height: 350,
+              mode:'markers',
+              hovermode:'closest',
+              title:'Noisy Histogram'
+            };
+
+            Plotly.newPlot('noisyHist', data, layout)
+
+          });
+
+      </script>
+
+      <!-- Bootstrap core JavaScript -->
+      <script src="vendor/jquery/jquery.min.js"></script>
+      <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    </body>
+
+    </html>

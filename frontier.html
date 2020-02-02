@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Modern Business - Start Bootstrap Template</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="css/modern-business.css" rel="stylesheet">
+
+  <!-- Vega -->
+  <script src="https://vega.github.io/vega/vega.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@3"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@5"></script>
+
+  <!-- Plotly-->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">DPGraph</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="problem.html">Problem Statement</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="frontier.html">Accuracy Frontier</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="performance.html">Performance Frontier</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPortfolio" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Empirical Findings
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownPortfolio">
+              <a class="dropdown-item" href="finding.html">Finding Overview</a>
+              <a class="dropdown-item" href="#">Competitive Algorithm</a>
+              <a class="dropdown-item" href="#">Effect of Data Shape</a>
+              <a class="dropdown-item" href="#">Comparison Against Baseline</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownBlog" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Background Overview
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownBlog">
+              <a class="dropdown-item" href="glossary.html">Reference: Glossary</a>
+              <a class="dropdown-item" href="dataset.html">Reference: Dataset</a>
+              <a class="dropdown-item" href="algorithm.html">Reference: Algorithms</a>
+              <a class="dropdown-item" href="DPdefinition.html">Reference: Differential Privacy</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- Page Content -->
+  <div class="container">
+
+    <h1 class="text-left">Privacy Accuracy Frontier</h1>
+        <p class="text-left" style= "background-color: PowderBlue"> Given a dataset and a privacy level (epsilon), which algorithm introduce the least error?
+        </p>
+
+        <p class="text-left"> We show below (on the right) the Privacy Accuracy Frontier which is a representation of the best achievable error across different privacy levels (i.e., epsilon values). It plots the error over degree distribution, or subgraph counting, of various algorithms on the chosen input dataset (y-axis) versus the privacy level (epsilon) on the x-axis. </p>
+
+        <p class="text-left"> User first needs to specify which statistics they are interested in investigating (degree distribution of subgraph counting). Then, a privacy accuracy frontier corresponding to that statistic is generated on the right. </p>
+
+        <p class="text-left"> Each dot corresponds to the error of a specific algorithm at a specific epsilon. For the task of degree distribution, Click on a dot to visualize the noisy histogram of the algorithm in the middle. Dots corresponding to the same epsilon are placed along the same vertical line, and dots corresponding to the same algorithms all share the same unique color. *The points that make up the lower convex hull are those that achieve the least error at that privacy level, and are called the frontier. The points on the frontier alone can be visualized by toggling the visualize frontier checkbox on the far right. Click the "Show/Hide Algorithms" button to view the list of algorithms. Algorithms can be included or excluded from the plot using the associated check-boxes.* </p>
+
+        <p class="text-left"> For degree distribution, two histograms are shown. The true degree distribution histogram is shown on the left. The noisy degree distribution histogram is shown in the middle. * Both histograms contain the same number of bins for easier comparison. Clicking on a bin of a histogram displays the number of counts in that bin. *For subgraph counting, the subgraph is plotted on the left. In the middle, the true count and the noisy count are shown next to each other. </p>
+
+        <select id = "Degree Type"> 
+        <option value = "1" selected = "selected">Node DP</option>
+        </select>
+
+        <select id = "Utility"> 
+        <option value = "1" selected = "selected">Degree Distribution</option>
+        </select>
+
+        <select id = "Dataset"> 
+        <option value = "1" selected = "selected">Dataset:</option>
+        <option value = "2">CIT</option>
+        <option value = "3">DBLP</option>
+        <option value = "4">Facebook</option>
+        </select>
+
+        <button onclick="frontierFn()">Apply Setting</button>
+
+        <br>
+
+        <p id = "result"> Please choose a dataset. </p>
+
+        <script>
+
+          function frontierFn() {
+
+            // First determine which dataset we have chosen. If none is, display empty true histogram
+
+            // In this part we should also determine which true graphs we want to show. Set source to be NULL if no dataset is selected.
+
+            var temp_data = document.getElementById("Dataset").value;
+            if (temp_data == 1){
+              // Tell user they need to choose a dataset.
+              document.getElementById("result").innerHTML = "Dataset is not specified !";
+              var dataChosen = 'EMPTY';
+              var graphSource = "PlotBlank.png";
+              console.log(graphSource);
+            } 
+            else {
+              document.getElementById("result").innerHTML = "This input choice is valid.";
+              if (temp_data == 2) {
+                var dataChosen = 'CIT';
+              } else if (temp_data == 3) {
+                var dataChosen = 'DBLP';
+              } 
+              else {
+                var dataChosen = 'FACEBOOK';
+              }
+              var graphSource = "Plot"+dataChosen+".png";
+              console.log(graphSource);
+            }
+
+            // This part draws the frontier 
+
+            var algorithms = ['CH', 'toH', 'NL']
+            var csvName = dataChosen + '.csv';
+            Plotly.d3.csv(csvName, (err, rows) => {
+                var tempPlot = document.getElementById('scatterFrontier')
+                var data = algorithms.map(y => {
+                  var d = rows.filter(r => r.algorithm === y)
+                  
+                  return {
+                    type: 'scatter',
+                    name: y,
+                    x: d.map(r => r.epsilon),
+                    y: d.map(r => r.L1error)
+                  }
+                })
+
+                var layout = {
+                  autosize: false,
+                  width: 350,
+                  height: 300,
+                  xaxis: {
+                    type: 'log',
+                    autorange: true
+                  },
+                  margin: {
+                    l: 30,
+                    r: 30,
+                    b: 30,
+                    t: 35,
+                    pad: 4
+                  },
+                  // Let's test out the margin/padding settings
+                  mode:'markers',
+                  hovermode:'closest',
+                  title:'Privacy Frontier '+dataChosen
+                };
+                
+                Plotly.newPlot('scatterFrontier', data, layout,{showSendToCloud: true});
+
+                // This function below handles the onClick event on frontier. 
+                tempPlot.on('plotly_click', function(data){
+                  // var pts = '';
+                  // for(var i=0; i < data.points.length; i++){
+                  //     pts = 'epsilon = '+ data.points[i].x.toPrecision(3) +'\nL1error = '+
+                  //           data.points[i].y.toPrecision(3) + '\nDataset = ' +temp_data+ '\n\n';
+                  // }
+                  // alert('Closest point clicked:\n\n'+pts);
+
+                  // Note that dataChosen works! We still know which dataset we have chosen. To uniquely identify which noisy histogram 
+                  // we want to display, we need 1) algorithm 2) x-value
+                  var pts = '';
+                  var curveChosen = '';
+                  var eChosen = '';
+                  var rankChosen = '';
+                  for(var i=0; i < data.points.length; i++){
+                      curveChosen = data.points[i].curveNumber;
+                      if (curveChosen == 0) {
+                        curveChosen = "CH";
+                      } else if (curveChosen == 1) {
+                        curveChosen = "toH";
+                      } else {
+                        curveChosen = "NL";
+                      }
+                      eChosen = data.points[i].x.toPrecision(1);
+                      console.log(curveChosen);
+                      console.log(eChosen);
+                      if (eChosen == 0.01) {rankChosen = 1;} 
+                      else if (eChosen == 0.02) {rankChosen = 2;} 
+                      else if (eChosen == 0.05) {rankChosen = 3;} 
+                      else if (eChosen == 0.1) {rankChosen = 4;} 
+                      else if (eChosen == 0.2) {rankChosen = 5;} 
+                      else if (eChosen == 0.5) {rankChosen = 6;} 
+                      else if (eChosen == 1) {rankChosen = 7;}
+                      else if (eChosen == 2) {rankChosen = 8;}
+                      else if (eChosen == 5) {rankChosen = 9;}
+                      else {rankChosen = 10;}
+
+                      // alert("rank is "+rankChosen);
+                      // if (eChosen == 0.01) {
+                      //   //alert("this is a test! "+eChosen+" "+curveChosen+" "+dataChosen);
+
+                      //   // Let's run the code to change the noisy histogram here
+                      //   // We need to correctly identify the csv file we are using here
+                      //   var noisyHistName = dataChosen + curveChosen + ".csv";
+                      //   alert("this is a test! "+noisyHistName);
+                      //   Plotly.d3.csv(noisyHistName, function(err, rows){
+
+                      //     function unpack(rows, key) {
+                      //       return rows.map(function(row) { return row[key]; });
+                      //     }
+
+                      //     var data = [{
+                      //       type: 'bar',
+                      //       x: unpack(rows, 'degree'),
+                      //       y: unpack(rows, 'count')
+                      //     }]
+
+                      //     var layout = {
+                      //       autosize: false,
+                      //       width: 300,
+                      //       height: 350,
+                      //       mode:'markers',
+                      //       hovermode:'closest',
+                      //       title:'Noisy Histogram'
+                      //     };
+
+                      //     Plotly.newPlot('noisyHist', data, layout)
+
+                      //   });
+                      // }
+                        var noisyHistName = dataChosen + curveChosen + rankChosen + ".csv";
+                        var testHeight = 300; // this is for testing: set variable for layout parameters
+                        //alert("this is a test! "+noisyHistName);
+                        Plotly.d3.csv(noisyHistName, function(err, rows){
+
+                          function unpack(rows, key) {
+                            return rows.map(function(row) { return row[key]; });
+                          }
+
+                          var data = [{
+                            type: 'bar',
+                            x: unpack(rows, 'degree'),
+                            y: unpack(rows, 'count')
+                          }]
+
+                          var layout = {
+                            autosize: false,
+                            width: 200,
+                            height: testHeight,
+                            xaxis: {
+                              type: 'log',
+                              autorange: true
+                            },
+                            margin: {
+                              l: 30,
+                              r: 30,
+                              b: 30,
+                              t: 35,
+                              pad: 4
+                            },
+                            mode:'markers',
+                            hovermode:'closest',
+                            title:'Noisy Histogram'
+                          };
+
+                          Plotly.newPlot('noisyHist', data, layout)
+
+                        });
+
+                  }
+                });
+
+              });
+          
+          // Every time we select a dataset, we want to display its corresponding true histogram. (for now we only have one for testing)
+
+            var trueHistName = dataChosen+'HistCSV.csv'
+            Plotly.d3.csv(trueHistName, function(err, rows){
+
+            function unpack(rows, key) {
+              return rows.map(function(row) { return row[key]; });
+            }
+
+            var data = [{
+              type: 'bar',
+              x: unpack(rows, 'degree'),
+              y: unpack(rows, 'count')
+            }]
+
+            var layout = {
+              autosize: false,
+              width: 200,
+              height: 300,
+              xaxis: {
+                type: 'log',
+                autorange: true
+              },
+              margin: {
+                l: 30,
+                r: 30,
+                b: 30,
+                t: 35,
+                pad: 4
+              },
+              mode:'markers',
+              hovermode:'closest',
+              title:'True Histogram'
+            };
+
+            Plotly.newPlot('trueHist', data, layout)
+
+          });
+
+          // We also want to display an empty noisy histogram (because when a dataset is first selected, the noisy histogram will be empty)
+          Plotly.d3.csv("emptyHistCSV.csv", function(err, rows){
+
+            function unpack(rows, key) {
+              return rows.map(function(row) { return row[key]; });
+            }
+
+            var data = [{
+              type: 'bar',
+              x: unpack(rows, 'degree'),
+              y: unpack(rows, 'count')
+            }]
+
+            var layout = {
+              autosize: false,
+              width: 200,
+              height: 300,
+              xaxis: {
+                type: 'log',
+                autorange: true
+              },
+              margin: {
+                l: 30,
+                r: 30,
+                b: 30,
+                t: 35,
+                pad: 4
+              },
+              mode:'markers',
+              hovermode:'closest',
+              title:'Noisy Histogram'
+            };
+
+            Plotly.newPlot('noisyHist', data, layout)
+
+          });
+
+          // Lastly, we want to update the true graph by changing the source, stored in variable "graphSource"
+          var trueGraphSource = document.getElementById("trueGraph").src;
+          console.log(trueGraphSource);
+          document.getElementById("trueGraph").src = graphSource;
+        }
+
+        </script>
+
+        <!-- <div id="scatterFrontier"></div>
+        <div id="trueHist" class="trueHist"></div>
+        <div id="noisyHist" class="noisyHist"></div> -->
+
+        <div>
+          <div style="float: left;" id="scatterFrontier"></div>
+          <div style="float: left;" id="trueHist" class="trueHist"></div>
+          <div style="float: left;" id="noisyHist" class="noisyHist"></div>
+          <div style="float: left;" id="originalGraph">
+            <!-- <p style="font-size:120%;">Visualization of Original Dataset</p> -->
+            <img src="PlotBlank.png" alt="Something has gone wrong" style="width:350px;height:300px;" id="trueGraph">
+          </div>
+          <br style="clear: left;" />
+        </div>
+
+        <br>
+
+        <!-- <p class="text-left"> Visualization of chosen dataset: </p> -->
+
+        <!-- <img src="PlotBlank.png" alt="Something has gone wrong" style="width:500px;height:500px;" id="trueGraph"> -->
+
+  </div>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
