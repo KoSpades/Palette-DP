@@ -159,7 +159,7 @@
 
                 var layout = {
                   autosize: false,
-                  width: 350,
+                  width: 500,
                   height: 300,
                   xaxis: {
                     type: 'log',
@@ -268,7 +268,7 @@
 
                           var layout = {
                             autosize: false,
-                            width: 200,
+                            width: 300,
                             height: testHeight,
                             xaxis: {
                               type: 'log',
@@ -312,7 +312,7 @@
 
             var layout = {
               autosize: false,
-              width: 200,
+              width: 300,
               height: 300,
               xaxis: {
                 type: 'log',
@@ -349,7 +349,7 @@
 
             var layout = {
               autosize: false,
-              width: 200,
+              width: 300,
               height: 300,
               xaxis: {
                 type: 'log',
@@ -373,7 +373,6 @@
 
           // Lastly, we want to update the true graph by changing the source, stored in variable "graphSource"
           var trueGraphSource = document.getElementById("trueGraph").src;
-          console.log(trueGraphSource);
           document.getElementById("trueGraph").src = graphSource;
         }
 
@@ -387,11 +386,16 @@
           <div style="float: left;" id="scatterFrontier"></div>
           <div style="float: left;" id="trueHist" class="trueHist"></div>
           <div style="float: left;" id="noisyHist" class="noisyHist"></div>
-          <div style="float: left;" id="originalGraph">
-            <!-- <p style="font-size:120%;">Visualization of Original Dataset</p> -->
+          <br style="clear: left;" />
+        </div>
+
+        <br>
+        
+        <div>
+          <div style="float: middle;">
+            <p> Visualization of Original Dataset: </p>
             <img src="PlotBlank.png" alt="Something has gone wrong" style="width:350px;height:300px;" id="trueGraph">
           </div>
-          <br style="clear: left;" />
         </div>
 
         <br>
