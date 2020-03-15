@@ -77,8 +77,10 @@
   <!-- Page Content -->
   <div class="container">
 
+    <!-- Following are some text describing the problem statement -->
+
     <h1 class="text-left">Problem Statement</h1>
-    <p class="text-left" style= "background-color: PowderBlue"> Which differentially private algorithms introduce the least errors for the task of releasing the degree distribution, or subgraph counting, for a graph dataset?</p>
+    <p class="text-left" style= "background-color: rgb(116, 192, 202)"> Which differentially private algorithms introduce the least errors for the task of releasing the degree distribution, or subgraph counting, for a graph dataset?</p>
 
     <ul>
       <li>The degree distribution is the probability distribution of  all node’s degrees in a graph dataset.</li>
@@ -92,38 +94,15 @@
     <p class="text-left"> For subgraph counting, we first show the shape of the subgraph. Then, two counts are displayed. “True Count” is the number of subgraphs in the original graph. “Noisy Count” is the count we obtained from running the differentially private graph algorithm on the input graph.
     </p>
 
-<!--
-      <div class="btn-group">
-        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Utility Function
-        </button>
-        <div class="dropdown-menu">
-          <a class="dropdown-item" href="#">Degree Distribution</a>
-          <a class="dropdown-item" href="#">Subgraph Counting</a>
-        </div>
-      </div>
-
-      <div class="btn-group">
-        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Dataset
-        </button>
-        <div class="dropdown-menu">
-          <a class="dropdown-item" href="#">First Dataset</a>
-        </div>
-      </div>
-
-      <div class="btn-group">
-        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Algorithm
-        </button>
-        <div class="dropdown-menu">
-          <a class="dropdown-item" href="#">Naive Trunction</a>
-          <a class="dropdown-item" href="#">&Theta;-Cumulative</a>
-          <a class="dropdown-item" href="#">&Theta;-&Omega; Histogram</a>
-          <a class="dropdown-item" href="#">Flowgraph</a>
-        </div>  
-      </div>
--->
+    <!--
+    Following are some selections allowing user to specify input settings. 
+    These settings are: 
+    1. Privacy Type: [Node, Edge]
+    2. Utility Function: [DD, SGC]
+    3. Dataset: [CIT, DBLP, FACEBOOK]
+    4. Alogirthm: [toH, NL, CH]
+    5. Eps Level: [0.01, 0.1, 1, 10] 
+    -->
 
     <select id = "Degree Type"> 
     <option value = "1" selected = "selected">Node DP</option>
@@ -149,18 +128,23 @@
 
     <select id = "Epsilon"> 
     <option value = "1" selected = "selected">Epsilon:</option>
-    <option value = "2">0.1</option>
-    <option value = "3">1</option>
-    <option value = "4">10</option>
+    <option value = "2">0.01</option>
+    <option value = "3">0.1</option>
+    <option value = "4">1</option>
+    <option value = "5">10</option>
     </select>
 
     <button onclick="matchFn()">Apply Setting</button>
 
     <br>
 
+    <!-- Following paragraph reminds users to enter valid input settings. -->
+
     <p id = "result"> Display the user input here. </p>
 
     <script>
+
+      // Following function reminds users to enter valid input settings.
 
       function matchFn() {
         if (document.getElementById("Dataset").value == 1 || document.getElementById("Algorithm").value == 1){
@@ -177,84 +161,73 @@
 
     <br>
 
+    <!-- The two following charts display the true DD Histogram and noisy DD Histogram, based on the input setting user has selected. -->
+    <!-- For now they are just placeholders displaying toy histograms. -->
 
-<!--     <div id="trueHist" class="hi"></div>
+    <div>
+      <div style="float: left;" id="trueHist" class="trueHist"></div>
+      <div style="float: left;" id="noisyHist" class="noisyHist"></div>
+      <br style="clear: left;" />
+    </div>
 
     <script>
-      vegaEmbed(
-        '#trueHist',
-        'trueHist.json'
-        );
-      </script>
 
-      <div id="noisyHist" class="hi2"></div>
+      // Following are script used to create the histograms.
+      // This first function creates the true DD Histogram.
 
-      <script>
-        vegaEmbed(
-          '#noisyHist',
-          'noisyHist.json'
-          );
-        </script> -->
+      Plotly.d3.csv("trueHistCSV.csv", function(err, rows){
 
-      <div>
-        <div style="float: left;" id="trueHist" class="trueHist"></div>
-        <div style="float: left;" id="noisyHist" class="noisyHist"></div>
-        <br style="clear: left;" />
-      </div>
+          function unpack(rows, key) {
+            return rows.map(function(row) { return row[key]; });
+          }
 
-      <script>
+          var data = [{
+            type: 'bar',
+            x: unpack(rows, 'degree'),
+            y: unpack(rows, 'count')
+          }]
 
-        Plotly.d3.csv("trueHistCSV.csv", function(err, rows){
+          var layout = {
+            autosize: false,
+            width: 300,
+            height: 350,
+            mode:'markers',
+            hovermode:'closest',
+            title:'Noisy Histogram'
+          };
 
-            function unpack(rows, key) {
-              return rows.map(function(row) { return row[key]; });
-            }
+          Plotly.newPlot('trueHist', data, layout)
 
-            var data = [{
-              type: 'bar',
-              x: unpack(rows, 'degree'),
-              y: unpack(rows, 'count')
-            }]
+        });
 
-            var layout = {
-              autosize: false,
-              width: 300,
-              height: 350,
-              mode:'markers',
-              hovermode:'closest',
-              title:'Noisy Histogram'
-            };
+      // This second function creates the noisy DD Histogram.
 
-            Plotly.newPlot('trueHist', data, layout)
+      Plotly.d3.csv("noisyHistCSV.csv", function(err, rows){
 
-          });
+          function unpack(rows, key) {
+            return rows.map(function(row) { return row[key]; });
+          }
 
-        Plotly.d3.csv("noisyHistCSV.csv", function(err, rows){
+          var data = [{
+            type: 'bar',
+            x: unpack(rows, 'degree'),
+            y: unpack(rows, 'count')
+          }]
 
-            function unpack(rows, key) {
-              return rows.map(function(row) { return row[key]; });
-            }
+          var layout = {
+            autosize: false,
+            width: 300,
+            height: 350,
+            mode:'markers',
+            hovermode:'closest',
+            title:'Noisy Histogram'
+          };
 
-            var data = [{
-              type: 'bar',
-              x: unpack(rows, 'degree'),
-              y: unpack(rows, 'count')
-            }]
+          Plotly.newPlot('noisyHist', data, layout)
 
-            var layout = {
-              autosize: false,
-              width: 300,
-              height: 350,
-              mode:'markers',
-              hovermode:'closest',
-              title:'Noisy Histogram'
-            };
+        });
 
-            Plotly.newPlot('noisyHist', data, layout)
-
-          });
-
-      </script>
+    </script>
 
       <!-- Bootstrap core JavaScript -->
       <script src="vendor/jquery/jquery.min.js"></script>
