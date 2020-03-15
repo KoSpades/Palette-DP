@@ -77,6 +77,8 @@
   <!-- Page Content -->
   <div class="container">
 
+    <!-- Following are some text describing how we are interact with the privacy frontier. -->
+
     <h1 class="text-left">Privacy Accuracy Frontier</h1>
         <p class="text-left" style= "background-color: PowderBlue"> Given a dataset and a privacy level (epsilon), which algorithm introduce the least error?
         </p>
@@ -88,6 +90,14 @@
         <p class="text-left"> Each dot corresponds to the error of a specific algorithm at a specific epsilon. For the task of degree distribution, Click on a dot to visualize the noisy histogram of the algorithm in the middle. Dots corresponding to the same epsilon are placed along the same vertical line, and dots corresponding to the same algorithms all share the same unique color. *The points that make up the lower convex hull are those that achieve the least error at that privacy level, and are called the frontier. The points on the frontier alone can be visualized by toggling the visualize frontier checkbox on the far right. Click the "Show/Hide Algorithms" button to view the list of algorithms. Algorithms can be included or excluded from the plot using the associated check-boxes.* </p>
 
         <p class="text-left"> For degree distribution, two histograms are shown. The true degree distribution histogram is shown on the left. The noisy degree distribution histogram is shown in the middle. * Both histograms contain the same number of bins for easier comparison. Clicking on a bin of a histogram displays the number of counts in that bin. *For subgraph counting, the subgraph is plotted on the left. In the middle, the true count and the noisy count are shown next to each other. </p>
+
+        <!--
+        Following are some selections allowing user to specify input settings. 
+        These settings are: 
+        1. Privacy Type: [Node]
+        2. Utility Function: [DD]
+        3. Dataset: [CIT, DBLP, FACEBOOK]
+        -->
 
         <select id = "Degree Type"> 
         <option value = "1" selected = "selected">Node DP</option>
@@ -103,6 +113,11 @@
         <option value = "3">DBLP</option>
         <option value = "4">Facebook</option>
         </select>
+
+        <!-- 
+        After clicking on the folloiwng button, user sees the privacy frontier, the true/noisy DD Hist, as well as a graph
+        of the original dataset, given that they have entered valid input settings. 
+        -->
 
         <button onclick="frontierFn()">Apply Setting</button>
 
@@ -128,6 +143,8 @@
             } 
             else {
               document.getElementById("result").innerHTML = "This input choice is valid.";
+              
+              // dataChosen stores the dataset that user has chosen
               if (temp_data == 2) {
                 var dataChosen = 'CIT';
               } else if (temp_data == 3) {
@@ -136,8 +153,8 @@
               else {
                 var dataChosen = 'FACEBOOK';
               }
+              // graphSource stores the source (.png) of an image of the original dataset
               var graphSource = "Plot"+dataChosen+".png";
-              console.log(graphSource);
             }
 
             // This part draws the frontier 
@@ -172,7 +189,6 @@
                     t: 35,
                     pad: 4
                   },
-                  // Let's test out the margin/padding settings
                   mode:'markers',
                   hovermode:'closest',
                   title:'Privacy Frontier '+dataChosen
@@ -180,17 +196,10 @@
                 
                 Plotly.newPlot('scatterFrontier', data, layout,{showSendToCloud: true});
 
-                // This function below handles the onClick event on frontier. 
+                // This function below determines which noisy histogram to display, based on the point that user clicked on the frontier. 
                 tempPlot.on('plotly_click', function(data){
-                  // var pts = '';
-                  // for(var i=0; i < data.points.length; i++){
-                  //     pts = 'epsilon = '+ data.points[i].x.toPrecision(3) +'\nL1error = '+
-                  //           data.points[i].y.toPrecision(3) + '\nDataset = ' +temp_data+ '\n\n';
-                  // }
-                  // alert('Closest point clicked:\n\n'+pts);
 
-                  // Note that dataChosen works! We still know which dataset we have chosen. To uniquely identify which noisy histogram 
-                  // we want to display, we need 1) algorithm 2) x-value
+                  // To uniquely identify which noisy histogram we want to display, we need 1) algorithm 2) epsilon value (x-value)
                   var pts = '';
                   var curveChosen = '';
                   var eChosen = '';
@@ -218,84 +227,55 @@
                       else if (eChosen == 5) {rankChosen = 9;}
                       else {rankChosen = 10;}
 
-                      // alert("rank is "+rankChosen);
-                      // if (eChosen == 0.01) {
-                      //   //alert("this is a test! "+eChosen+" "+curveChosen+" "+dataChosen);
+                      // Based on the dataset, algorithm, and epsilon level chosen, we determine the name of the CSV file
+                      // that store the noisy histogram user has chosen 
+                      var noisyHistName = dataChosen + curveChosen + rankChosen + ".csv";
 
-                      //   // Let's run the code to change the noisy histogram here
-                      //   // We need to correctly identify the csv file we are using here
-                      //   var noisyHistName = dataChosen + curveChosen + ".csv";
-                      //   alert("this is a test! "+noisyHistName);
-                      //   Plotly.d3.csv(noisyHistName, function(err, rows){
+                      var testHeight = 300; // this simply tests that we can use variables for layout parameters
 
-                      //     function unpack(rows, key) {
-                      //       return rows.map(function(row) { return row[key]; });
-                      //     }
+                      // The following function plost the noisy histogram
+                      Plotly.d3.csv(noisyHistName, function(err, rows){
 
-                      //     var data = [{
-                      //       type: 'bar',
-                      //       x: unpack(rows, 'degree'),
-                      //       y: unpack(rows, 'count')
-                      //     }]
+                        function unpack(rows, key) {
+                          return rows.map(function(row) { return row[key]; });
+                        }
 
-                      //     var layout = {
-                      //       autosize: false,
-                      //       width: 300,
-                      //       height: 350,
-                      //       mode:'markers',
-                      //       hovermode:'closest',
-                      //       title:'Noisy Histogram'
-                      //     };
+                        var data = [{
+                          type: 'bar',
+                          x: unpack(rows, 'degree'),
+                          y: unpack(rows, 'count')
+                        }]
 
-                      //     Plotly.newPlot('noisyHist', data, layout)
+                        var layout = {
+                          autosize: false,
+                          width: 300,
+                          height: testHeight,
+                          xaxis: {
+                            type: 'log',
+                            autorange: true
+                          },
+                          margin: {
+                            l: 30,
+                            r: 30,
+                            b: 30,
+                            t: 35,
+                            pad: 4
+                          },
+                          mode:'markers',
+                          hovermode:'closest',
+                          title:'Noisy Histogram'
+                        };
 
-                      //   });
-                      // }
-                        var noisyHistName = dataChosen + curveChosen + rankChosen + ".csv";
-                        var testHeight = 300; // this is for testing: set variable for layout parameters
-                        //alert("this is a test! "+noisyHistName);
-                        Plotly.d3.csv(noisyHistName, function(err, rows){
+                        Plotly.newPlot('noisyHist', data, layout)
 
-                          function unpack(rows, key) {
-                            return rows.map(function(row) { return row[key]; });
-                          }
-
-                          var data = [{
-                            type: 'bar',
-                            x: unpack(rows, 'degree'),
-                            y: unpack(rows, 'count')
-                          }]
-
-                          var layout = {
-                            autosize: false,
-                            width: 300,
-                            height: testHeight,
-                            xaxis: {
-                              type: 'log',
-                              autorange: true
-                            },
-                            margin: {
-                              l: 30,
-                              r: 30,
-                              b: 30,
-                              t: 35,
-                              pad: 4
-                            },
-                            mode:'markers',
-                            hovermode:'closest',
-                            title:'Noisy Histogram'
-                          };
-
-                          Plotly.newPlot('noisyHist', data, layout)
-
-                        });
+                      });
 
                   }
                 });
 
               });
           
-          // Every time we select a dataset, we want to display its corresponding true histogram. (for now we only have one for testing)
+            // The folloiwng function plots the ture DD histogram of a dataset. Note that one dataset has only one true DD. 
 
             var trueHistName = dataChosen+'HistCSV.csv'
             Plotly.d3.csv(trueHistName, function(err, rows){
@@ -371,16 +351,14 @@
 
           });
 
-          // Lastly, we want to update the true graph by changing the source, stored in variable "graphSource"
+          // Lastly, we want to update the image of the dataset by changing the source, based on variable variable "graphSource"
           var trueGraphSource = document.getElementById("trueGraph").src;
           document.getElementById("trueGraph").src = graphSource;
         }
 
         </script>
 
-        <!-- <div id="scatterFrontier"></div>
-        <div id="trueHist" class="trueHist"></div>
-        <div id="noisyHist" class="noisyHist"></div> -->
+        <!-- Following are the four graphs we want to display on the page: privacy frontier, true Hist, noisy Hist, and image of dataset -->
 
         <div>
           <div style="float: left;" id="scatterFrontier"></div>
@@ -399,10 +377,6 @@
         </div>
 
         <br>
-
-        <!-- <p class="text-left"> Visualization of chosen dataset: </p> -->
-
-        <!-- <img src="PlotBlank.png" alt="Something has gone wrong" style="width:500px;height:500px;" id="trueGraph"> -->
 
   </div>
 
