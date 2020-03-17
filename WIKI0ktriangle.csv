@@ -1,0 +1,11 @@
+﻿algorithm,epsilon,relError
+Ladder,0.01,0.023062
+Ladder,0.1,0.002417
+Ladder,1,0.000176
+Ladder,10,0.000052
+LAP,0.01,0.132544
+LAP,0.1,0.019213
+LAP,1,0.001393
+LAP,10,0.000086
+,,
+,,

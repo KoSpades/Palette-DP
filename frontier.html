@@ -101,10 +101,12 @@
 
         <select id = "Degree Type"> 
         <option value = "1" selected = "selected">Node DP</option>
+        <option value = "2">Edge DP</option>
         </select>
 
         <select id = "Utility"> 
         <option value = "1" selected = "selected">Degree Distribution</option>
+        <option value = "2">Subgraph Counting</option>
         </select>
 
         <select id = "Dataset"> 
@@ -112,6 +114,14 @@
         <option value = "2">CIT</option>
         <option value = "3">DBLP</option>
         <option value = "4">Facebook</option>
+        <option value = "5">WIKI</option>
+        </select>
+
+        <select id = "Query"> 
+        <option value = "1" selected = "selected">4kclique</option>
+        <option value = "2">3kstar</option>
+        <option value = "3">2ktriangle</option>
+        <option value = "4">0ktriangle</option>
         </select>
 
         <!-- 
@@ -127,8 +137,7 @@
 
         <script>
 
-          function frontierFn() {
-
+          function DDFn() {
             // First determine which dataset we have chosen. If none is, display empty true histogram
 
             // In this part we should also determine which true graphs we want to show. Set source to be NULL if no dataset is selected.
@@ -354,23 +363,110 @@
           // Lastly, we want to update the image of the dataset by changing the source, based on variable variable "graphSource"
           var trueGraphSource = document.getElementById("trueGraph").src;
           document.getElementById("trueGraph").src = graphSource;
+        };
+
+        function SGCFn() {
+          var temp_data = document.getElementById("Dataset").value;
+          var temp_query = document.getElementById("Query").value;
+          if (temp_data == 1) {
+            // Tell user they need to choose a dataset.
+            document.getElementById("result").innerHTML = "Dataset is not specified !";
+            var dataChosen = 'EMPTY';
+            var graphSource = "PlotBlank.png";
+            console.log(graphSource);
+          } 
+          else {
+            document.getElementById("result").innerHTML = "This input choice is valid.";
+            
+            // dataChosen stores the dataset that user has chosen
+            if (temp_data == 2) {
+              var dataChosen = 'CIT';
+            } else if (temp_data == 3) {
+              var dataChosen = 'DBLP';
+            } 
+            else if (temp_data == 4) {
+              var dataChosen = 'FACEBOOK';
+            } else {
+              var dataChosen = "WIKI";
+            }
+            // graphSource stores the source (.png) of an image of the original dataset
+            var graphSource = "Plot"+dataChosen+".png";
+            // queryChosen stores the query that user has chosen
+            if (temp_query == 1) {
+              var queryChosen = "4kclique"
+            } else if (temp_query == 2) {
+              var queryChosen = "3kstar"
+            } else if (temp_query == 3) {
+              var queryChosen = "2ktriangle"
+            } else {
+              var queryChosen = "0ktriangle"
+            }
+          }
+
+          // This part draws the frontier 
+
+          var algorithms = ['Ladder', 'LAP']
+          var csvName = dataChosen + queryChosen+ '.csv';
+          Plotly.d3.csv(csvName, (err, rows) => {
+          var tempPlot = document.getElementById('scatterFrontier')
+          var data = algorithms.map(y => {
+            var d = rows.filter(r => r.algorithm === y)         
+            return {
+              type: 'scatter',
+              name: y,
+              x: d.map(r => r.epsilon),
+              y: d.map(r => r.relError)
+            }
+          })
+
+          var layout = {
+            autosize: false,
+            width: 500,
+            height: 300,
+            xaxis: {
+              type: 'log',
+              autorange: true
+            },
+            margin: {
+              l: 30,
+              r: 30,
+              b: 30,
+              t: 35,
+              pad: 4
+            },
+            mode:'markers',
+            hovermode:'closest',
+            title:'Privacy Frontier '+dataChosen
+          };
+          
+          Plotly.newPlot('scatterFrontier', data, layout,{showSendToCloud: true});
+        });
+      };
+
+        function frontierFn() {
+          if (document.getElementById("Degree Type").value == 1 && document.getElementById("Utility").value == 1) {
+            document.getElementById("trueHist").style.visibility = "visible";
+            document.getElementById("noisyHist").style.visibility = "visible";
+            document.getElementById("imageOrigin").style.visibility = "visible";
+            DDFn();
+          } else {
+            document.getElementById("trueHist").style.visibility = "hidden";
+            document.getElementById("noisyHist").style.visibility = "hidden";
+            document.getElementById("imageOrigin").style.visibility = "hidden";
+            SGCFn();
+          }
         }
 
-        </script>
+      </script>
 
         <!-- Following are the four graphs we want to display on the page: privacy frontier, true Hist, noisy Hist, and image of dataset -->
 
-        <div>
+        <div id="DDContainer">
           <div style="float: left;" id="scatterFrontier"></div>
           <div style="float: left;" id="trueHist" class="trueHist"></div>
           <div style="float: left;" id="noisyHist" class="noisyHist"></div>
           <br style="clear: left;" />
-        </div>
-
-        <br>
-        
-        <div>
-          <div style="float: middle;">
+          <div style="float: middle;" id="imageOrigin">
             <p> Visualization of Original Dataset: </p>
             <img src="PlotBlank.png" alt="Something has gone wrong" style="width:350px;height:300px;" id="trueGraph">
           </div>
