@@ -133,7 +133,7 @@
 
         <br>
 
-        <p id = "result"> Please choose a dataset. </p>
+        <p id = "result"> Please specify input settings. </p>
 
         <script>
 
@@ -406,7 +406,7 @@
           // This part draws the frontier 
 
           var algorithms = ['Ladder', 'LAP']
-          var csvName = dataChosen + queryChosen+ '.csv';
+          var csvName = "accuracy/"+dataChosen + queryChosen+ '.csv';
           Plotly.d3.csv(csvName, (err, rows) => {
           var tempPlot = document.getElementById('scatterFrontier')
           var data = algorithms.map(y => {

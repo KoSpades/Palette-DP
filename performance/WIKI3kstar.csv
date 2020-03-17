@@ -1,0 +1,9 @@
+﻿algorithm,epsilon,timeMean
+Ladder,0.01,49.777434
+Ladder,0.1,50.561324
+Ladder,1,50.20973
+Ladder,10,50.260991
+LAP,0.01,0.019757
+LAP,0.1,0.019441
+LAP,1,0.018876
+LAP,10,0.019593
